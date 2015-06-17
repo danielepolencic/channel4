@@ -1,0 +1,16 @@
+{
+  "name": "channel4",
+  "version": "0.0.0",
+  "description": "",
+  "main": "channel.js",
+  "scripts": {
+    "test": "babel-node test.js | faucet"
+  },
+  "author": "Daniele Polencic <daniele.polencic@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^5.5.8",
+    "tape": "^4.0.0",
+    "faucet": "0.0.1"
+  }
+}
