@@ -60,12 +60,11 @@ const runTick = (channel) => {
   }
 
   const message = channel.buffer.shift();
+  const consumer = channel.consumers.shift();
 
-  for (let i = 0, len = channel.consumers.length; i < len; i += 1) {
-    setImmediate(channel.consumers.shift().bind(null, message));
-  }
+  setImmediate(consumer.bind(null, message));
 
-  return channel;
+  return runTick(channel);
 };
 
 const identity = (value) => value;
