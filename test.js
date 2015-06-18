@@ -53,14 +53,6 @@ test('Channel.take takes values from a channel', (assert) => {
   });
 });
 
-test('Channel.take can fire multiple callbacks', (assert) => {
-  assert.plan(1);
-
-  let channel = Channel();
-  Channel.put(channel, 100);
-  Channel.take(channel, (value) => (value / 5), (value) => assert.equal(value, 20));
-});
-
 test('Channel.take ignores values from closed channel with consumers', (assert) => {
   assert.plan(2);
 

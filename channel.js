@@ -23,15 +23,14 @@ Channel.put = (channel, value) => {
   return runTick(channel);
 };
 
-Channel.take = (channel, ...fns) => {
+Channel.take = (channel, callback) => {
   if (channel.closed && channel.buffer.length === 0) return channel;
 
-  const takeOneMore = (value) => {
-    if (value !== END) Channel.take.apply(void 0, [channel].concat(fns));
-    return value;
+  const consumer = (value) => {
+    if (value !== END) Channel.take.call(void 0, channel, callback);
+    callback && callback.call(void 0, value);
   };
 
-  const consumer = pipeline([takeOneMore].concat(fns));
   channel.consumers.push(consumer);
 
   return runTick(channel);
@@ -68,9 +67,3 @@ const runTick = (channel) => {
 };
 
 const identity = (value) => value;
-
-const pipeline = (fns) => {
-  return (seed) => {
-    return fns.reduce((previous, current) => current.call(void 0, previous), seed);
-  }
-};
