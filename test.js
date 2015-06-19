@@ -43,10 +43,20 @@ test('Channel.take takes values from a channel', (assert) => {
   let i = 0;
   Channel.put(channel, 91);
   Channel.put(channel, 92);
+  Channel.take(channel, assert.equal.bind(null, 91));
+  Channel.take(channel, assert.equal.bind(null, 92));
+});
+
+test('Channel.take is not called multiple times on the same channel', (assert) => {
+  assert.plan(1);
+
+  let channel = Channel();
   Channel.take(channel, sequential(
     assert.equal.bind(null, 91),
-    assert.equal.bind(null, 92)
+    assert.fail.bind(null, 'should not have been called')
   ));
+  Channel.put(channel, 91);
+  Channel.put(channel, 92);
 });
 
 test('Channel.take ignores values from closed channel with consumers', (assert) => {
@@ -70,13 +80,11 @@ test('Channel.take ignores values from closed channel with values', (assert) => 
   Channel.put(channel, 75);
   Channel.close(channel);
   assert.deepEqual(channel.buffer, [75, Channel.END]);
-  Channel.take(channel, sequential(
-    assert.equal.bind(null, 75),
-    (value) => {
-      assert.strictEqual(value, Channel.END);
-      assert.deepEqual(channel.buffer, []);
-    }
-  ));
+  Channel.take(channel, assert.equal.bind(null, 75));
+  Channel.take(channel, (value) => {
+    assert.strictEqual(value, Channel.END);
+    assert.deepEqual(channel.buffer, []);
+  });
 });
 
 test('Channel.close closes a channel', (assert) => {
@@ -158,10 +166,8 @@ test('Channel.merge merges multiple channels into one', (assert) => {
   let i = 0;
   let output = Channel();
   Channel.merge([one, two], output);
-  Channel.take(output, sequential(
-    assert.equal.bind(null, 46),
-    assert.equal.bind(null, 47)
-  ));
+  Channel.take(output, assert.equal.bind(null, 46));
+  Channel.take(output, assert.equal.bind(null, 47));
 
   Channel.put(one, 46);
   Channel.put(two, 47);

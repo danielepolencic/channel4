@@ -26,12 +26,7 @@ Channel.put = (channel, value) => {
 Channel.take = (channel, callback) => {
   if (channel.closed && channel.buffer.length === 0) return channel;
 
-  const consumer = (value) => {
-    if (value !== END) Channel.take.call(void 0, channel, callback);
-    callback && callback.call(void 0, value);
-  };
-
-  channel.consumers.push(consumer);
+  if (isFunction(callback)) channel.consumers.push(callback);
 
   return runTick(channel);
 };
@@ -41,10 +36,14 @@ Channel.close = (channel) => {
 };
 
 Channel.pipe = (input, output, keepOpen = KEEP_OPEN, transform = identity) => {
-  Channel.take(input, (value) => {
+  const consume = (value) => {
     if (!(keepOpen === KEEP_OPEN && value === END))
       Channel.put(output, transform(value));
-  });
+
+    if (value !== END) Channel.take(input, consume);
+  };
+
+  Channel.take(input, consume);
   return output;
 };
 
@@ -67,3 +66,5 @@ const runTick = (channel) => {
 };
 
 const identity = (value) => value;
+
+const isFunction = (fn) => ({}).toString.call(fn) === '[object Function]';

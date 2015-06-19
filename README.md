@@ -105,7 +105,7 @@ Channel.put(channel, 46);
 
 ### Channel.take :: (channel, (a) -> b) -> channel
 
-Listen for values pushed into the channel and fire the callback.
+Take values from the channel and fire the callback.
 The result in a noop when called on closed channel.
 
 ```js
@@ -163,6 +163,7 @@ let one = Channel();
 let two = Channel();
 let output = Channel();
 Channel.merge([one, two], output);
+Channel.take(output, console.log.bind(console, 'received: '));
 Channel.take(output, console.log.bind(console, 'received: '));
 Channel.put(one, 1);
 Channel.put(two, 2);
