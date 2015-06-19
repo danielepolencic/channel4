@@ -173,6 +173,19 @@ test('Channel.merge merges multiple channels into one', (assert) => {
   Channel.put(two, 47);
 });
 
+test('Channel.mux broadcasts values from a single into multiple channels', (assert) => {
+  assert.plan(2);
+
+  let one = Channel();
+  let two = Channel();
+  let input = Channel();
+  Channel.mux(input, [one, two]);
+  Channel.take(one, assert.equal.bind(null, 64));
+  Channel.take(two, assert.equal.bind(null, 64));
+
+  Channel.put(input, 64);
+});
+
 const sequential = (...fns) => {
   let callCount = 0;
   return (...args) => {

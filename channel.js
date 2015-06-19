@@ -52,6 +52,18 @@ Channel.merge = (channels, output, keepOpen, transform) => {
   return output;
 };
 
+Channel.mux = (input, channels, keepOpen, transform = identity) => {
+  const consume = (value) => {
+    if (!(keepOpen === KEEP_OPEN && value === END))
+      channels.forEach((channel) => Channel.put(channel, transform(value)));
+
+    if (value !== END) Channel.take(input, consume);
+  };
+
+  Channel.take(input, consume);
+  return channels;
+};
+
 const runTick = (channel) => {
   if (!(channel.buffer.length !== 0 && channel.consumers.length !== 0)) {
     return channel;

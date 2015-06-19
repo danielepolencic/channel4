@@ -156,7 +156,7 @@ Channel.put(input, 44);
 
 Merge all values from an array of channels into the output. If one of the input
 channels is closed, the output channel is kept open unless it is specified
-otherwise. You can apply a transformation function while mergin the values.
+otherwise. You can apply a transformation function while merging the values.
 
 ```js
 let one = Channel();
@@ -169,6 +169,25 @@ Channel.put(one, 1);
 Channel.put(two, 2);
 
 // prints `received: 1` and `received 2`
+```
+
+### Channel.mux :: (input, [channel], KEEP_OPEN, (a) -> b) -> [channel]
+
+Broadcast all the values from input channel to an array of channels. If the
+input channel is closed, the output channels are kept open unless it is
+specified otherwise. You can apply a transformation function to the value before
+it is broadcasted.
+
+```js
+let one = Channel();
+let two = Channel();
+let input = Channel();
+Channel.mux(input, [one, two]);
+Channel.take(one, console.log.bind(console, 'received: '));
+Channel.take(two, console.log.bind(console, 'received: '));
+Channel.put(input, 1);
+
+// prints `received: 1` and `received 1`
 ```
 
 ### Channel.END
