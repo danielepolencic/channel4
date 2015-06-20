@@ -152,7 +152,7 @@ Channel.put(input, 44);
 // prints: `received: 22`
 ```
 
-### Channel.merge :: ([channel], output, KEEP_OPEN, (a) -> b) -> output
+### Channel.demux :: ([channel], output, KEEP_OPEN, (a) -> b) -> output
 
 Merge all values from an array of channels into the output. If one of the input
 channels is closed, the output channel is kept open unless it is specified
@@ -162,7 +162,7 @@ otherwise. You can apply a transformation function while merging the values.
 let one = Channel();
 let two = Channel();
 let output = Channel();
-Channel.merge([one, two], output);
+Channel.demux([one, two], output);
 Channel.take(output, console.log.bind(console, 'received: '));
 Channel.take(output, console.log.bind(console, 'received: '));
 Channel.put(one, 1);
@@ -206,8 +206,8 @@ Channel.put(channel, Channel.END);
 
 ### Channel.KEEP_OPEN
 
-Keep the output channel open during a `Channel.pipe` or `Channel.merge` as
-a response to an incoming `Channel.END` value.
+Keep the output channel open during a `Channel.pipe`, `Channel.demux` or
+`Channel.mux` as a response to an incoming `Channel.END` value.
 
 ```js
 let input = Channel();
@@ -222,8 +222,8 @@ Channel.put(output, 44);
 
 ### Channel.CLOSE_BOTH
 
-Close the output channel when the input during a `Channel.pipe` or
-`Channel.merge` received a `Channel.end` value.
+Close the output channel when the input during a `Channel.pipe`, `Channel.mux`
+or `Channel.demux` received a `Channel.end` value.
 
 ```js
 let input = Channel();

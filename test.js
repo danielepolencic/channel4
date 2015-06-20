@@ -158,14 +158,14 @@ test('Channel.pipe does not pipe END to output', (assert) => {
   Channel.take(input, () => assert.fail('should not have been called'));
 });
 
-test('Channel.merge merges multiple channels into one', (assert) => {
+test('Channel.demux merges multiple channels into one', (assert) => {
   assert.plan(2);
 
   let one = Channel();
   let two = Channel();
   let i = 0;
   let output = Channel();
-  Channel.merge([one, two], output);
+  Channel.demux([one, two], output);
   Channel.take(output, assert.equal.bind(null, 46));
   Channel.take(output, assert.equal.bind(null, 47));
 

@@ -47,7 +47,7 @@ Channel.pipe = (input, output, keepOpen = KEEP_OPEN, transform = identity) => {
   return output;
 };
 
-Channel.merge = (channels, output, keepOpen, transform) => {
+Channel.demux = (channels, output, keepOpen, transform) => {
   channels.forEach((channel) => Channel.pipe(channel, output, keepOpen, transform));
   return output;
 };
