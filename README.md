@@ -1,5 +1,6 @@
 # Channel4
-Dead simple communicating sequential processes for Javascript (like Clojurescript core.async, or Go channels).
+Dead simple communicating sequential processes for Javascript (like
+Clojurescript core.async, or Go channels).
 
 ```shell
 npm install channel4
@@ -31,8 +32,8 @@ document.querySelector('button').addEventListener('click', listenerFn);
 
 There's a one-to-one relationship between the producer `addEventListener` and
 the consumer `listenerFn`. Also the producer knows 1) there's a single listener
-attached, 2) how the data is feeded 3) when the data is going to be processed.
-Adding a second listener introduces some challenges:
+attached, 2) how the data is feeded to the listener and 3) when the data is
+going to be processed.  Adding a second listener introduces some challenges:
 
 ```js
 document.querySelector('button').addEventListener('click', (e) => {
@@ -46,9 +47,9 @@ document.querySelector('button').addEventListener('click', otherListenerFn);
 ```
 
 It's immediately obvious that this couples the producer and consumer: when you
-introduce another consumer, the producer has to change accordingly.
+introduce another listener, the producer has to cater for it.
 
-This is poor separation of concerns.
+**This is poor separation of concerns.**
 
 But what if you could decouple consumers from producers? What if the producer
 could send the message without the need to worry about who's consuming it? What
@@ -71,12 +72,11 @@ let channel = Channel();
 document.querySelector('button')
   .addEventListener('click', Channel.put.bind(null, channel));
 
-channel.take(channel, (value) => console.log('Hello'));
-channel.take(channel, (value) => console.log('World'));
+channel.take(channel, (value) => console.log('Hello World'));
 ```
 
-In the example above, `addEventListener` isn't aware that two consumers are
-consuming items from the channel.
+In the example above, `addEventListener` isn't aware that there's a consumer
+listening to click events.
 
 ```js
 let channel = Channel();
@@ -206,7 +206,7 @@ Channel.put(channel, Channel.END);
 
 ### Channel.KEEP_OPEN
 
-Keep the output channel open during a `Channel.pipe`, `Channel.demux` or
+Keep the output channel open during `Channel.pipe`, `Channel.demux` or
 `Channel.mux` as a response to an incoming `Channel.END` value.
 
 ```js
@@ -222,8 +222,7 @@ Channel.put(output, 44);
 
 ### Channel.CLOSE_BOTH
 
-Close the output channel when the input during a `Channel.pipe`, `Channel.mux`
-or `Channel.demux` received a `Channel.end` value.
+Close the output channel when the input receives a `Channel.end` value.
 
 ```js
 let input = Channel();
